@@ -145,8 +145,9 @@ def process_points_and_save_to_csv(geo_data, road_data):
                 if idx > 0 and idx % batch_size == 0:
                     save_batch_to_csv(results, OUTPUT_FILE_RESULTS, ['tree_lat', 'tree_lon', 'bearing', 'road_lat', 'road_lon', "CONDITIE"])
                     save_batch_to_csv(skipped, OUTPUT_FILE_SKIPPED, ['tree_lat', 'tree_lon', 'bearing', 'road_lat', 'road_lon', "CONDITIE", "Reason"])
+                    print(f"Processed {idx} / {len(geo_data)} road points. Skipped {len(skipped)} due to null values or being further than {CAMERA_TOO_FAR_THRESHOLD} m from the road.")
                     results = []  # Reset results for the next batch
-                    print(f"Processed {idx} / {len(geo_data)} road points. Skipped: {len(skipped)}")
+                    skipped = []  # Reset skipped for the next batch
         else:
             print("Skipping row with invalid geometry:", row)
 
