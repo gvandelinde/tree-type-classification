@@ -79,7 +79,7 @@ def getMeta(points, saveLocation, apiCallLimit=0):
                         meta = f"{i}_{resJson['date']}_{lat_lon_str}_{conditie}"
                         getStreet(road_lat,road_lon, saveLocation, bearing, meta, conditie)
             else:
-                print("Failed to retrieve image for", road_lat, road_lon, ":", resJson)
+                print("Failed to retrieve image for", road_lat, road_lon, "GSV returned:", resJson['status'])
 
         if i % 100 == 0: #print progress
             print(f"Retrieved {i} / {len(points)} GSV images")
