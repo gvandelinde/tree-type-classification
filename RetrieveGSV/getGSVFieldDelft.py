@@ -50,16 +50,16 @@ def computePointOnField(fro, theta, d):
     lo2 = fro[1] + math.atan2(math.sin(theta) * math.sin(Ad) * math.cos(fro[0]) , math.cos(Ad) - math.sin(fro[0]) * math.sin(la2))
     return (la2,lo2)
 
-def getMeta(points, saveLocation, imLimit=0):
+def getMeta(points, saveLocation, apiCallLimit=0):
     uniqueImageIDs= []
     points = points.reset_index()  # make sure indexes pair with number of rows
-    if imLimit == 0:
-        imLimit = len(points)
+    if apiCallLimit == -1:
+        apiCallLimit = len(points)
 
     i = 0
     for idx, crop in points.iterrows():
 
-        if i <= imLimit:
+        if i <= apiCallLimit:
             # print(crop)
             tree_lat, tree_lon = crop['tree_lat'], crop['tree_lon']
             road_lat, road_lon = crop['road_lat'], crop['road_lon']
@@ -71,8 +71,6 @@ def getMeta(points, saveLocation, imLimit=0):
 
 
             if resJson['status'] ==  'OK':
-        
-
                 if checkInGrowing(resJson['date']):
                     if resJson['pano_id'] not in uniqueImageIDs:
                         uniqueImageIDs.append(resJson['pano_id'])
@@ -80,7 +78,9 @@ def getMeta(points, saveLocation, imLimit=0):
                         conditie = crop['CONDITIE']
                         meta = f"{i}_{resJson['date']}_{lat_lon_str}_{conditie}"
                         getStreet(road_lat,road_lon, saveLocation, bearing, meta, conditie)
-        
+            else:
+                print("Failed to retrieve image for", road_lat, road_lon, ":", resJson)
+
         if i % 100 == 0: #print progress
             print(f"Retrieved {i} / {len(points)} GSV images")
         i+=1
@@ -88,12 +88,6 @@ def getMeta(points, saveLocation, imLimit=0):
 
 
 
-#
-# print(computeBearing(fro, to))
-#
-# print(computeBearing(to, fro))
-
 
 if __name__ == "__main__":
-    imLimit = 100
-    getMeta(crops, 'RetrieveGSV/images', imLimit=1000)
+    getMeta(crops, 'RetrieveGSV/images', apiCallLimit=-1)
