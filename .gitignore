@@ -1,4 +1,7 @@
 RetrieveGSV/images
+<<<<<<< HEAD
 RetrieveGSV/model/is_tree_images/classified_images
 RetrieveGSV/model/is_tree_model
+=======
+>>>>>>> 69d59a77f8bdbeb5452c5c20d0061d7776b25415
 config.toml
