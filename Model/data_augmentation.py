@@ -34,15 +34,18 @@ def augment_and_save_images(images_folder, low_sample_categories, transforms):
     cat_counts = Counter(image_counts)
     max_samples = max(cat_counts.values())
     for category in low_sample_categories:
-        os.makedirs('/kaggle/working/'+"tree"+"/"+category)
+        # os.makedirs('/kaggle/working/'+"tree"+"/"+category)
         cat_folder = os.path.join(images_folder, category)
         num_samples = cat_counts[category]
 
         # Calculate how many additional images to generate
         num_additional_images = max_samples - num_samples
         for i in range (num_additional_images):
-            random_index = random.randint(0, len(os.listdir(cat_folder)) - 1)
-            randomfilename=os.listdir(cat_folder)[random_index]
+            while True:
+                random_index = random.randint(0, len(os.listdir(cat_folder)) - 1)
+                randomfilename=os.listdir(cat_folder)[random_index]
+                if "augmented" not in randomfilename:
+                    break
             image_path = os.path.join(cat_folder, randomfilename)
             image = Image.open(image_path)
 
