@@ -34,10 +34,12 @@ OVERPASS_API_URL = "http://overpass-api.de/api/interpreter"
 SHAPEFILE_PATH = 'RetrieveGSV/RoadPointsGeneration/TreehealthDataset/bomen.shp'
 OUTPUT_FILE_RESULTS = 'RetrieveGSV/RoadPointsGeneration/roadPoints/roadPointsDelft.csv'
 OUTPUT_FILE_SKIPPED = 'RetrieveGSV/RoadPointsGeneration/roadPoints/skippedPoints.csv'
+OUTPUT_FILE_AUGMENTED = 'RetrieveGSV/RoadPointsGeneration/roadPoints/augmentedRoadPointsDelft.csv'
 OUTPUT_FILE_OVERPASS = 'RetrieveGSV/RoadPointsGeneration/OverpassData/overpass_data.json'
 USE_OVERPASS_API_INSTEAD_OF_FILE = False
 CAMERA_TOO_FAR_THRESHOLD = 50  # Threshold in meters
-
+BATCH_SIZE = 100
+AUGMENTATION_DISTANCE = 5 # In meters
 
 
 def convert_rd_to_wgs(lat, lon):
@@ -111,11 +113,19 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     r = 6371000
     return c * r
 
+def form_result(from_point, to_point, conditie):
+    bearing = compute_bearing(from_point, to_point)
+    point_lat, point_lon = from_point
+    tree_lat, tree_lon = to_point
+    return [tree_lat, tree_lon, bearing, point_lat, point_lon, conditie]
+
 def process_points_and_save_to_csv(geo_data, road_data):
     """Find the closest way to each point and compute the bearing."""
     results = []
+    augmented = []
     skipped = []
-    batch_size = 100  # Define the batch size
+    # TODO: change back to 100! 
+    batch_size = BATCH_SIZE # Define the batch size
     all_roads = [LineString([(node['lon'], node['lat']) for node in element['geometry']]) for element in road_data['elements'] if element['type'] == 'way']
     for idx, row in geo_data.iterrows():
         conditie = row.CONDITIE
@@ -125,29 +135,52 @@ def process_points_and_save_to_csv(geo_data, road_data):
 
             # Find the closest road to the point
             closest_road = min(all_roads, key=lambda road: treepoint.distance(road))
+
+            # ADD: 
             
+            # print(f"all roads: {}\n")
             # Use nearest_points to find the closest point on this road to the point
             _, nearest_road_point = nearest_points(treepoint, closest_road)
+            distance_of_nearest_road_point = closest_road.project(nearest_road_point)  
+            augmentation_offset = AUGMENTATION_DISTANCE / 100000
+
+            # Datapoints for data-augmentation
+            interpolated_minus_offset = closest_road.interpolate(distance_of_nearest_road_point - augmentation_offset)
+            interpolated_plus_offset= closest_road.interpolate(distance_of_nearest_road_point + augmentation_offset)
+
+            # Calculate haversine distances
             distance = haversine_distance(tree_lat, tree_lon, nearest_road_point.y, nearest_road_point.x)
+            augmented_distance_minus = haversine_distance(tree_lat, tree_lon, interpolated_minus_offset.y, interpolated_minus_offset.x)
+            augmented_distance_plus = haversine_distance(tree_lat, tree_lon, interpolated_plus_offset.y, interpolated_plus_offset.x)
+
             if len(closest_road.coords) > 1:
                 # Compute the distance from the tree to the nearest road point
                 from_point = (nearest_road_point.y, nearest_road_point.x)
                 to_point = (tree_lat, tree_lon)
-                bearing = compute_bearing(from_point, to_point)
                 if distance >= CAMERA_TOO_FAR_THRESHOLD:
+                    bearing = compute_bearing(from_point, to_point)
                     skipped.append([tree_lat, tree_lon, bearing, nearest_road_point.y, nearest_road_point.x, conditie, "Too far from road ({:.2f} m)".format(distance)])
                 elif(conditie == None):
+                    bearing = compute_bearing(from_point, to_point)
                     skipped.append([tree_lat, tree_lon, bearing, nearest_road_point.y, nearest_road_point.x, conditie, "No condition"])
                 else:
-                    results.append([tree_lat, tree_lon, bearing, nearest_road_point.y, nearest_road_point.x, conditie])
+                    results.append(form_result(from_point, to_point, conditie))
+                    # Data augmentation! 
+                    if augmented_distance_minus <= CAMERA_TOO_FAR_THRESHOLD: 
+                        augmented.append(form_result((interpolated_minus_offset.y, interpolated_minus_offset.x), to_point, conditie) + [nearest_road_point.y, nearest_road_point.x, f"-{AUGMENTATION_DISTANCE}m"])
+                    if augmented_distance_plus <= CAMERA_TOO_FAR_THRESHOLD: 
+                        augmented.append(form_result((interpolated_plus_offset.y, interpolated_plus_offset.x), to_point, conditie) + [nearest_road_point.y, nearest_road_point.x, f"+{AUGMENTATION_DISTANCE}m"])
 
                 # Save the batch when it reaches the batch size
                 if idx > 0 and idx % batch_size == 0:
                     save_batch_to_csv(results, OUTPUT_FILE_RESULTS, ['tree_lat', 'tree_lon', 'bearing', 'road_lat', 'road_lon', "CONDITIE"])
                     save_batch_to_csv(skipped, OUTPUT_FILE_SKIPPED, ['tree_lat', 'tree_lon', 'bearing', 'road_lat', 'road_lon', "CONDITIE", "Reason"])
+                    save_batch_to_csv(augmented, OUTPUT_FILE_AUGMENTED, ['tree_lat', 'tree_lon', 'bearing', 'road_lat', 'road_lon', "CONDITIE", "original_lat", "original_lon", "adjustment"])
                     print(f"Processed {idx} / {len(geo_data)} road points. Skipped {len(skipped)} due to null values or being further than {CAMERA_TOO_FAR_THRESHOLD} m from the road.")
                     results = []  # Reset results for the next batch
                     skipped = []  # Reset skipped for the next batch
+                    augmented = []
+                    exit();
         else:
             print("Skipping row with invalid geometry:", row)
 
@@ -178,7 +211,6 @@ def rename_file_if_exists(filename):
 if __name__ == "__main__":
     # Fetch road data for Delft
     road_data = fetch_overpass_data_delft(USE_OVERPASS_API_INSTEAD_OF_FILE)
-
 
     # Load the geo data from the shapefile
     geo_data = geopandas.read_file(SHAPEFILE_PATH)

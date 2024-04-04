@@ -20,8 +20,10 @@ key = "&key=" + KEY
 
 
 ROADPOINTS_FILENAME = 'RetrieveGSV/RoadPointsGeneration/roadPoints/roadPointsDelft.csv'
+AUGMENTED_FILENAME = 'RetrieveGSV/RoadPointsGeneration/roadPoints/augmentedRoadPointsDelft.csv'
 
 crops = pd.read_csv(ROADPOINTS_FILENAME)
+aug_crops = pd.read_csv(AUGMENTED_FILENAME)
 print(crops.columns)
 
 def checkInGrowing(date):
@@ -78,6 +80,10 @@ def getMeta(points, saveLocation, apiCallLimit=0):
                         conditie = crop['CONDITIE']
                         meta = f"{i}_{resJson['date']}_{lat_lon_str}_{conditie}"
                         getStreet(road_lat,road_lon, saveLocation, bearing, meta, conditie)
+                    else:
+                        print(f"Pano idk")
+                else:
+                    print(f"growing date I ({i})guess..")
             else:
                 print("Failed to retrieve image for", road_lat, road_lon, "GSV returned:", resJson['status'])
 
@@ -91,3 +97,4 @@ def getMeta(points, saveLocation, apiCallLimit=0):
 
 if __name__ == "__main__":
     getMeta(crops, 'RetrieveGSV/images', apiCallLimit=-1)
+    getMeta(aug_crops, 'RetrieveGSV/images/augmented', apiCallLimit=-1)
