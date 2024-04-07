@@ -124,7 +124,6 @@ def process_points_and_save_to_csv(geo_data, road_data):
     results = []
     augmented = []
     skipped = []
-    # TODO: change back to 100! 
     batch_size = BATCH_SIZE # Define the batch size
     all_roads = [LineString([(node['lon'], node['lat']) for node in element['geometry']]) for element in road_data['elements'] if element['type'] == 'way']
     for idx, row in geo_data.iterrows():
@@ -180,7 +179,6 @@ def process_points_and_save_to_csv(geo_data, road_data):
                     results = []  # Reset results for the next batch
                     skipped = []  # Reset skipped for the next batch
                     augmented = []
-                    exit();
         else:
             print("Skipping row with invalid geometry:", row)
 
@@ -218,6 +216,7 @@ if __name__ == "__main__":
     # If the output files already exists, rename it
     rename_file_if_exists(OUTPUT_FILE_RESULTS)
     rename_file_if_exists(OUTPUT_FILE_SKIPPED)
+    rename_file_if_exists(OUTPUT_FILE_AUGMENTED)
 
     # Process the points and save the results to a CSV file
     process_points_and_save_to_csv(geo_data, road_data)
