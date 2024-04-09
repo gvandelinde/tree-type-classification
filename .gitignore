@@ -1,4 +1,4 @@
 RetrieveGSV/images
 Model/is_tree_images/classified_images
-Model/is_tree_model
+Model/is_tree_model.keras
 config.toml
