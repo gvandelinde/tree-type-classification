@@ -52,7 +52,7 @@ def augment_and_save_images(images_folder, low_sample_categories, transforms):
             # Apply transformations and save additional images
             transformed_image = transforms(image)
             new_filename = f"augmented_{num_samples + i + 1}_{randomfilename}"  # Append prefix to filename
-            new_image_path = os.path.join(images_folder, new_filename)
+            new_image_path = os.path.join(cat_folder, new_filename)
             transformed_image.save(new_image_path)
 # Transform and generate new blurred images for categories with smaller samples
 images_folder = 'Model/blurred_trees'
