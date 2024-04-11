@@ -1,4 +1,5 @@
 RetrieveGSV/images
+RetrieveGSV/RoadPointGeneration/TreehealthDataset/bomen.dbf
 Model/is_tree_images/classified_images
 Model/is_tree_model
 config.toml
