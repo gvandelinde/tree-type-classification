@@ -165,10 +165,12 @@ def process_points_and_save_to_csv(geo_data, road_data):
                 else:
                     results.append(form_result(from_point, to_point, conditie))
                     # Data augmentation! 
-                    if augmented_distance_minus <= CAMERA_TOO_FAR_THRESHOLD: 
-                        augmented.append(form_result((interpolated_minus_offset.y, interpolated_minus_offset.x), to_point, conditie) + [nearest_road_point.y, nearest_road_point.x, f"-{AUGMENTATION_DISTANCE}m"])
-                    if augmented_distance_plus <= CAMERA_TOO_FAR_THRESHOLD: 
-                        augmented.append(form_result((interpolated_plus_offset.y, interpolated_plus_offset.x), to_point, conditie) + [nearest_road_point.y, nearest_road_point.x, f"+{AUGMENTATION_DISTANCE}m"])
+
+                    if not (conditie == "Matig" or conditie == "Redelijk"):
+                        if augmented_distance_minus <= CAMERA_TOO_FAR_THRESHOLD: 
+                            augmented.append(form_result((interpolated_minus_offset.y, interpolated_minus_offset.x), to_point, conditie) + [nearest_road_point.y, nearest_road_point.x, f"-{AUGMENTATION_DISTANCE}m"])
+                        if augmented_distance_plus <= CAMERA_TOO_FAR_THRESHOLD: 
+                            augmented.append(form_result((interpolated_plus_offset.y, interpolated_plus_offset.x), to_point, conditie) + [nearest_road_point.y, nearest_road_point.x, f"+{AUGMENTATION_DISTANCE}m"])
 
                 # Save the batch when it reaches the batch size
                 if idx > 0 and idx % batch_size == 0:
