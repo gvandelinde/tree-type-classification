@@ -17,4 +17,27 @@
 
 ## How to augment images
 
-1. Run `python Model/blur_trees.py` from root directory and generate blurred tree images
+1. Run `python Model/blur_trees.py` from root directory and generate blurred tree images to blurred_trees
+2. Run `python Model/data_augmentation.py` from root directory and append augmented images to blurred_trees
+
+## How to train and classify images
+
+#Option 1: Full dataset has been generated and in Kaggle
+1. Open "Model/delfttreescnn.ipynb" in Kaggle
+2. Copy notebook and run all cells.
+3. 
+
+#Option 2: When creating dataset from scratch
+1. Run `python Model/delfttreescnn.py` from root directory
+   
+#(IMPORTANT) 
+
+Two models are compared in our implementation:
+model_name_1 = 'ResNet50'
+model_name_2 = 'CustomCNN'
+Comment out either trained_model_1 or trained_model_2 depending on whether you want to use the ResNet50 architecture or our custom architecture.
+
+This is in the last two lines of code as shown below:
+
+trained_model_1 = ...
+trained_model_2 = ...
