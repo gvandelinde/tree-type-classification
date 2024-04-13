@@ -1,4 +1,6 @@
 RetrieveGSV/images
+RetrieveGSV/blurred_trees
+RetrieveGSV/augmented_images
 Model/is_tree_images/classified_images
 Model/is_tree_model.keras
 config.toml

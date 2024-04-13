@@ -55,6 +55,6 @@ def augment_and_save_images(images_folder, low_sample_categories, transforms):
             new_image_path = os.path.join(images_folder, new_filename)
             transformed_image.save(new_image_path)
 # Transform and generate new blurred images for categories with smaller samples
-images_folder = '/blurred_trees'
+images_folder = 'RetrieveGSV/blurred_trees'
 low_sample_categories = identify_low_sample_categories(images_folder)
 augment_and_save_images(images_folder, low_sample_categories, augmentation_transforms)
