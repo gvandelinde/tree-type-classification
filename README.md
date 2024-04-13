@@ -25,7 +25,6 @@
 Option 1: Full dataset has been generated and in Kaggle
    1. Open "Model/delfttreescnn.ipynb" in Kaggle
    2. Copy notebook and run all cells.
-   3. 
 
 Option 2: When creating dataset from scratch
    1. Run `python Model/delfttreescnn.py` from root directory
