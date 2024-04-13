@@ -18,4 +18,3 @@
 ## How to augment images
 
 1. Run `python Model/blur_trees.py` from root directory and generate blurred tree images
-2. Run  `python Model/data_augmentation.py` from current directory and generate augmented images and append to blurred_tree
