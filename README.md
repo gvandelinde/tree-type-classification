@@ -32,11 +32,12 @@ Option 2: When creating dataset from scratch
 **(IMPORTANT)**
 
 Two models are compared in our implementation:
-model_name_1 = 'ResNet50'
-model_name_2 = 'CustomCNN'
+1. model_name_1 = 'ResNet50'
+2. model_name_2 = 'CustomCNN'
+   
 Comment out either trained_model_1 or trained_model_2 depending on whether you want to use the ResNet50 architecture or our custom architecture.
 
 This is in the last two lines of code as shown below:
 
-trained_model_1 = ...
+trained_model_1 = ...,
 trained_model_2 = ...
