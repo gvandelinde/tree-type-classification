@@ -1,1 +1,0 @@
-GSV images will generate in this folder
