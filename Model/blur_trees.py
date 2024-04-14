@@ -10,7 +10,7 @@ TREE_TYPES = ['Dood', 'Goed', 'Matig', 'Redelijk', 'Slecht', 'Zeer Slecht']
 
 # Directories for input and output images
 INPUT_PATH = "RetrieveGSV/images"
-OUTPUT_PATH = "Model/blurred_trees"
+OUTPUT_PATH = "RetrieveGSV/blurred_trees"
 
 # Initialize the inference client with API details
 CLIENT = InferenceHTTPClient(
