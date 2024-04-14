@@ -17,10 +17,11 @@ def identify_low_sample_categories(images_folder):
 
 # Define data augmentation transforms
 augmentation_transforms = transforms.Compose([
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomVerticalFlip(),
-    transforms.RandomRotation(degrees=30),
-    transforms.RandomAffine(degrees=0, translate=(0.2, 0.2))  
+    transforms.RandomHorizontalFlip(),  # Randomly flip the image horizontally
+    transforms.RandomVerticalFlip(),    # Randomly flip the image vertically
+    transforms.RandomRotation(degrees=30),  # Randomly rotate the image by up to 30 degrees
+    transforms.RandomAffine(degrees=0, translate=(0.2, 0.2))  # Apply random affine transformation
+])
 
 # Function to apply transformations and save additional images
 def augment_and_save_images(images_folder, low_sample_categories, transforms):

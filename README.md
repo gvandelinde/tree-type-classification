@@ -1,5 +1,10 @@
 # Tree Type Classification
 
+## Preliminary:
+
+1. Make a a new environment using Anaconda with python version 3.9.18
+2. Install the required libraries using `pip install -r requirements.txt`
+
 ## To retrieve Google Street View images of trees in Delft:
 
 1. Download the shapefile dataset from: [https://drive.google.com/file/d/1rnScsLg924qSM6s8JTADw9yU_b943MRj/view?usp=sharing](https://drive.google.com/file/d/1rnScsLg924qSM6s8JTADw9yU_b943MRj/view?usp=sharing) and place its contents (bomen.dbf, bomen.prj, bomen.shp, bomen.shx) in folder `RetrieveGSV/RoadPointsGeneration/TreehealthDataset/`.
@@ -15,12 +20,12 @@
 2. "is_tree_model.keras" file is saved
 3. Filter out images by running `python Model/is_tree_classify.py` from root directory
 
-## How to augment images
+## How to augment images:
 
 1. Run `python Model/blur_trees.py` from root directory and generate blurred tree images to blurred_trees
 2. Run `python Model/data_augmentation.py` from root directory and append augmented images to blurred_trees
 
-## How to train and classify images
+## How to train and classify images:
 
 Option 1: Full dataset has been generated and in Kaggle
    1. Open "Model/delfttreescnn.ipynb" in Kaggle
